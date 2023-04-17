@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Новая запись</h1>
+    <form action="" method="post">
+    {% csrf_token %}
+    <div>
+    <label for="description" class="form-label">Описание</label>
+    <input name="description" type="text" class="form-control" id="description" required>
+    </div>
+
+    <div>
+    <label for="amount" class="form-label">Сумма</label>
+    <input name="amount" type="number" class="form-control" id="amount">
+    </div>
+
+    <div>
+    <label for="type" class="form-label">Тип</label>
+        <select name="type" id="type" class="form-control">
+            <option value="expense"> Расход </option>
+            <option value="income">Доход</option>
+        </select>
+    </div>
+    <input class="btn btn-info" type="submit" value="Добавить">
+    </form>
+{% endblock %}
