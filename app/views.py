@@ -39,4 +39,11 @@ def create_view(request):
                 amount=abs(int(request.POST.get("amount",0))),
             )
         return redirect("/")
-    return render(request, "create.html")
+    # return render(request, "create.html")
+
+    raise NotImplementedError
+
+def delete_view(request:HttpRequest, transaction_id: int)->HttpResponse:
+    Transaction.objects.filter(id=transaction_id).filter(user=request.user).delete()
+    return redirect("/")
+

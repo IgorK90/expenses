@@ -28,6 +28,7 @@ urlpatterns = [
     path('logout/', views_auth.logout_view, name='logout'),
     path('account/', views.account, name='account'),
     path('create/',views.create_view, name='create'),
+    path('delete/<int:transaction_id>',views.delete_view, name='delete'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
