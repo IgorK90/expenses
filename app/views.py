@@ -1,5 +1,6 @@
 import random
 
+from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
@@ -19,8 +20,34 @@ def account(request):
 
     if not user.is_authenticated:
         return redirect("/")
-    transactions = Transaction.objects.filter(user=user)
-    return render(request, 'account.html', {'user': user,"transactions":transactions})
+    transactions = Transaction.objects.filter(user=user).order_by("-id")
+    paginator = Paginator(transactions, 5)
+    page:int=1
+    if request.GET.get("page"):
+        page=int(request.GET.get("page"))
+
+    page_obj = paginator.get_page(page)
+    transactions=page_obj.object_list
+
+    return render(request, 'account.html',
+                  {'user': user,
+                   "transactions":transactions,
+                   "number_of_pages":paginator.num_pages,
+                   "pages":paginator.page_range,
+                   "current_page":page,
+                   "has_next":page_obj.has_next(),
+                   "has_previous":page_obj.has_previous(),
+                   "previous_page": page-1,
+                   "next_page":page+1,
+                   })
+    # return render(request, 'account.html',
+    #               {'user': user,
+    #                "transactions":transactions,
+    #                "number_of_pages":paginator.num_pages,
+    #                "pages":paginator.page_range,
+    #                "current_page":page,
+    #                "page_obj":page_obj,
+    #                })
 
 def create_view(request):
     user = request.user

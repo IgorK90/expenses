@@ -1,15 +1,38 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Личный кабинет</h1>
-<p>Добро пожаловать, {{ user.first_name }}!</p>
-<p>Ваш email: {{ user.email }}</p>
-<p><a href="/logout">Выйти</a></p>
+<h2>Менеджер расходов</h2>
+<p>Добро пожаловать, {{ user.first_name }}! Ваш email: {{ user.email }} (<a href="/logout">Выйти</a>)</p>
 {#    <p><a href="/create">Добавить транзакцию</a></p>#}
 <h2>Транзакции</h2>
+    <nav>
+        <ul class="pagination">
+            <li class="page-item {% if not has_previous %}disabled{% endif %}">
+                <a class="page-link" href="?page={{ previous_page }}">Назад</a></li>
+        {% for page in pages %}
+          <li class="page-item {% if page == current_page %}active{% endif %}"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+        {% endfor %}
+        <li class="page-item {% if not has_next %}disabled{% endif %}">
+          <a class="page-link" href="?page={{ next_page }}">Вперед</a></li>
+        </ul>
+    </nav>
+{#    ДЗ#}
+{#    <nav>#}
+{#        <ul class="pagination">#}
+{#            <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">#}
+{#                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Назад</a></li>#}
+{#        {% for page in pages %}#}
+{#          <li class="page-item {% if page == current_page %}active{% endif %}"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>#}
+{#        {% endfor %}#}
+{#        <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">#}
+{#          <a class="page-link" href="?page={{ page_obj.next_page_number }}">Вперед</a></li>#}
+{#        </ul>#}
+{#    </nav>#}
+
     <table class="table table-hover">
     <thead>
         <tr>
             <th>id</th>
+            <th>Дата</th>
             <th>Описание</th>
             <th>Сумма</th>
             <th>Операции</th>
@@ -19,6 +42,7 @@
     {% for transaction in transactions %}
         <tr>
             <td>{{ transaction.id }}</td>
+            <td>{{ transaction.created }}</td>
             <td>{{ transaction.description }}</td>
             <td style="color:
                     {% if transaction.amount < 0 %}
