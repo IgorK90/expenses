@@ -29,13 +29,34 @@
                     ">
                 {{ transaction.amount }} KZT
             </td>
-        <td><a class="btn btn-sm btn-danger" href="/delete/{{ transaction.id }}">delete</a></td>
+        <td>
+            <button class="btn btn-sm btn-danger" onclick="delete_transaction({{ transaction.id }})">delete</button>
+            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal_edit_{{ transaction.id }}">ред</button>
+        </td>
         </tr>
     {% endfor %}
     </tbody>
     </table>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
       Добавить
     </button>
+    <a href="/add10" class="btn btn-danger" style="margin-left: 100px">Добавить 10 транзакций</a>
+
+    <script>
+        const delete_transaction = (transaction_id) => {
+            const result = confirm("Удалить транзакцию номер " + transaction_id + "?");
+            if (result === true) {
+                const url = "/delete/"+transaction_id;
+                window.location = url;
+            }
+        }
+    </script>
+
     {% include "create.html" %}
+
+    {% for transaction in transactions %}
+        {% include "edit.html" %}
+    {% endfor %}
+
 {% endblock %}

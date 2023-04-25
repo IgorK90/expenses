@@ -11,5 +11,6 @@ class Transaction(models.Model):
     def __str__(self):
         return f"{self.description}: {self.amount} KZT"
 
-
+    def amount_abs(self) -> int:
+        return abs(self.amount)
 # Create your models here.
