@@ -4,15 +4,39 @@
 <p>Добро пожаловать, {{ user.first_name }}! Ваш email: {{ user.email }} (<a href="/logout">Выйти</a>)</p>
 {#    <p><a href="/create">Добавить транзакцию</a></p>#}
 <h2>Транзакции</h2>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link {% if transaction_type == "" %}active{% endif %}"
+           aria-current="page" href="/account/?search={{ search }}">Все</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if transaction_type == "expenses" %}active{% endif %}"
+           href="/account/expenses?search={{ search }}">Расходы</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if transaction_type == "incomes" %}active{% endif %}"
+           href="/account/incomes?search={{ search }}">Доходы</a>
+      </li>
+    </ul>
+    <br>
+    <form method="get">
+    <div class="mb-3">
+      <input name="search" type="text"
+             class="form-control" id="search" placeholder="Поиск..."
+             value="{{ search }}"
+             autofocus
+      >
+    </div>
+    </form>
     <nav>
         <ul class="pagination">
             <li class="page-item {% if not has_previous %}disabled{% endif %}">
-                <a class="page-link" href="?page={{ previous_page }}">Назад</a></li>
+                <a class="page-link" href="?page={{ previous_page }}&search={{ search }}">Назад</a></li>
         {% for page in pages %}
-          <li class="page-item {% if page == current_page %}active{% endif %}"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+          <li class="page-item {% if page == current_page %}active{% endif %}"><a class="page-link" href="?page={{ page }}&search={{ search }}">{{ page }}</a></li>
         {% endfor %}
         <li class="page-item {% if not has_next %}disabled{% endif %}">
-          <a class="page-link" href="?page={{ next_page }}">Вперед</a></li>
+          <a class="page-link" href="?page={{ next_page }}&search={{ search }}">Вперед</a></li>
         </ul>
     </nav>
 {#    ДЗ#}

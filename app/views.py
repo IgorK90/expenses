@@ -15,12 +15,23 @@ def index(request):
         return render(request, 'index.html')
 
 
-def account(request):
+def account(request, transaction_type=""):
     user = request.user
 
     if not user.is_authenticated:
         return redirect("/")
+
+    search=request.GET.get("search","")
     transactions = Transaction.objects.filter(user=user).order_by("-id")
+
+    if search !="":
+        transactions=transactions.filter(description__icontains=search)
+
+    if transaction_type=="incomes":
+        transactions=transactions.filter(amount__gt=0)
+    if transaction_type=="expenses":
+        transactions=transactions.filter(amount__lt=0)
+
     paginator = Paginator(transactions, 5)
     page:int=1
     if request.GET.get("page"):
@@ -39,6 +50,8 @@ def account(request):
                    "has_previous":page_obj.has_previous(),
                    "previous_page": page-1,
                    "next_page":page+1,
+                   "search":search,
+                   "transaction_type":transaction_type,
                    })
     # return render(request, 'account.html',
     #               {'user': user,
