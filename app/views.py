@@ -6,6 +6,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.shortcuts import render
 from .models import Transaction
+from django.db.models import Sum, Avg
 
 
 def index(request):
@@ -24,6 +25,10 @@ def account(request, transaction_type=""):
     search=request.GET.get("search","")
     transactions = Transaction.objects.filter(user=user).order_by("-id")
 
+    # sum=transactions.aggregate(Sum("amount"))["amount__sum"]
+    sum=Transaction.objects.filter(user=user).aggregate(Sum("amount"))["amount__sum"]
+    avg=round(transactions.aggregate(Avg("amount"))["amount__avg"])
+
     if search !="":
         transactions=transactions.filter(description__icontains=search)
 
@@ -32,6 +37,11 @@ def account(request, transaction_type=""):
     if transaction_type=="expenses":
         transactions=transactions.filter(amount__lt=0)
 
+
+
+    message=request.GET.get("message","")
+    if message=="unsufficient":
+        message = "Недостаточно средств"
     paginator = Paginator(transactions, 5)
     page:int=1
     if request.GET.get("page"):
@@ -52,6 +62,9 @@ def account(request, transaction_type=""):
                    "next_page":page+1,
                    "search":search,
                    "transaction_type":transaction_type,
+                   "Sum":sum,
+                   "Avg":avg,
+                   "message":message,
                    })
     # return render(request, 'account.html',
     #               {'user': user,
@@ -69,6 +82,10 @@ def create_view(request):
 
     if request.method == "POST":
         if request.POST.get("type", "") == "expense":
+            total=Transaction.objects.filter(user=user).aggregate(Sum("amount"))["amount__sum"]
+            print (total)
+            if total < abs(int(request.POST.get("amount",0))):
+                return redirect("/account/?message=unsufficient")
             Transaction.objects.create(
                 user=user,
                 description=request.POST.get("description",""),
